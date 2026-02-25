@@ -1,27 +1,80 @@
-In this DevOps task, you need to build and deploy a full-stack CRUD application using the MEAN stack (MongoDB, Express, Angular 15, and Node.js). The backend will be developed with Node.js and Express to provide REST APIs, connecting to a MongoDB database. The frontend will be an Angular application utilizing HTTPClient for communication.  
+# MEAN Stack Application – Dockerized & CI/CD Deployed
 
-The application will manage a collection of tutorials, where each tutorial includes an ID, title, description, and published status. Users will be able to create, retrieve, update, and delete tutorials. Additionally, a search box will allow users to find tutorials by title.
+This project demonstrates the containerization, deployment, and CI/CD automation of a full-stack MEAN application using Docker, AWS EC2, Nginx reverse proxy, and GitHub Actions.
 
-## Project setup
+## Architecture
 
-### Node.js Server
+Internet (Port 80)
+        ↓
+Nginx Reverse Proxy
+        ↓
+Frontend (Angular Container)
+        ↓
+Backend (Node.js Container)
+        ↓
+MongoDB (Docker Container)
 
-cd backend
+## Docker Setup
 
-npm install
+- Backend container built using Node base image.
+- Frontend uses multi-stage build and served via Nginx.
+- MongoDB uses official MongoDB Docker image.
+- All services orchestrated using docker-compose.
 
-You can update the MongoDB credentials by modifying the `db.config.js` file located in `app/config/`.
+## Nginx Reverse Proxy
 
-Run `node server.js`
+Nginx acts as a reverse proxy:
 
-### Angular Client
+- Routes `/` to frontend container
+- Routes `/api` to backend container
+- Only port 80 is exposed publicly
 
-cd frontend
+nginx.conf
 
-npm install
+## CI/CD Pipeline (GitHub Actions)
 
-Run `ng serve --port 8081`
+On every push to main branch:
 
-You can modify the `src/app/services/tutorial.service.ts` file to adjust how the frontend interacts with the backend.
+1. Build backend Docker image
+2. Push backend image to Docker Hub
+3. Build frontend Docker image
+4. Push frontend image
+5. SSH into EC2
+6. Pull latest images
+7. Restart containers
 
-Navigate to `http://localhost:8081/`
+.github/workflows/deploy.yml
+
+Local Setup
+git clone <repo>
+cd project
+docker-compose up --build
+
+## AWS Deploment
+1. Launched Ubuntu EC2
+2. Installed Docker & Docker Compose
+3. Clone repository
+ docker-compose up -d
+
+ ## CI/CD
+ git push origin main
+
+ ## Screenshots
+
+### CI/CD Pipeline Execution
+![alt text](screenshot/cicd-success.png)
+
+### Docker Hub Images
+![alt text](screenshot/push-backend.png)
+![alt text](screenshot/frontend.png)
+
+### Application Running
+![alt text](screenshot/website.png)
+![alt text](screenshot/website(1).png)
+
+### Nginx Configuration
+![alt text](screenshot/docker-compose.yml(nginx).png)
+
+
+
+
